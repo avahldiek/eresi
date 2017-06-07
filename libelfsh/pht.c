@@ -674,10 +674,13 @@ elfsh_Phdr	*elfsh_insert_phdr(elfshobj_t *file, elfsh_Phdr *h)
   /* Fixup injected-PHDR file offset given the chosen virtual address */
  end:
   if (h->p_vaddr)
-    {
-      cur = elfsh_get_parent_section(file, h->p_vaddr, &range);
-      h->p_offset = cur->shdr->sh_offset + range;
-    }
+       {
+         cur = elfsh_get_parent_section(file, h->p_vaddr, &range);
+         if(cur)
+       	  h->p_offset = cur->shdr->sh_offset + range;
+         else
+          h->p_offset += elfsh_get_pagesize(file);
+       }
   memcpy(enew + file->hdr->e_phnum, h, elfsh_get_phentsize(file->hdr));
 
   /* Everything OK */

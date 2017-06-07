@@ -484,7 +484,8 @@ u_int			elfsh_set_got_addr(eresi_Addr *got, eresi_Addr val)
   PROFILER_IN(__FILE__, __FUNCTION__, __LINE__);
 
   // XXX Not yet implemented ... and not going to be
-  printf("[DEBUG] elfsh_set_got_addr\n");
+  //printf("[DEBUG] elfsh_set_got_addr\n");
+  *got = val;
 
   PROFILER_ROUT(__FILE__, __FUNCTION__, __LINE__, 0);
 }

@@ -128,7 +128,7 @@ int		elfsh_add_section(elfshobj_t	*file,
   /* Parse the section list */
   for (tmp = elfsh_section_is_runtime(sct) ? file->rsectlist : file->sectlist;
        tmp != NULL && tmp->next != NULL; tmp = tmp->next)
-    if (tmp->index == range)
+	if (tmp->index == range)
       {
 	/* Insert the new section */
 	sct->prev = tmp->prev;
@@ -142,11 +142,22 @@ int		elfsh_add_section(elfshobj_t	*file,
 
 	tmp->prev = sct;
 
+	// shift vaddr only if consecutive, afterwards, don't care
+	if(tmp->prev &&
+		tmp->shdr->sh_addr > tmp->prev->shdr->sh_addr + tmp->prev->shdr->sh_size)
+	   	shiftmode = ELFSH_SHIFTING_PARTIAL;
+
 	/* Update indexes, file offset, vaddr */
 	inserted = elfsh_shift_section(sct, tmp, shiftmode);
       }
-    else if (tmp->index >= range)
+    else if (tmp->index >= range) {
+      // shift vaddr only if consecutive, afterwards, don't care
+      if(tmp->prev &&
+    	   tmp->shdr->sh_addr > tmp->prev->shdr->sh_addr + tmp->prev->shdr->sh_size)
+    		shiftmode = ELFSH_SHIFTING_PARTIAL;
+
       inserted = elfsh_shift_section(sct, tmp, shiftmode);
+    }
 
   /* ==> Now the special cases <== */
 
